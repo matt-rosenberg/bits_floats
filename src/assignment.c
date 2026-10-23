@@ -4,15 +4,22 @@
 #include <stddef.h>
 
 unsigned bitset_symmetric_difference_count(uint32_t a, uint32_t b) {
-    (void)a;
-    (void)b;
-    return 0;
+    unsigned int symmetric_difference = a ^ b;
+    unsigned int count = 0;
+    for (int i = 0; i < 32; i++){
+        if (symmetric_difference & 1){
+            count++;
+        }
+        symmetric_difference = symmetric_difference >> 1;
+    }
+    return count;
 }
 
 uint32_t bit_range_mask(unsigned low, unsigned high) {
-    (void)low;
-    (void)high;
-    return 0;
+    uint32_t value = ~0u;
+    value = value >> (32 - (high - low + 1));
+    value = value << (low);
+    return value;
 }
 
 uint32_t splice_bits(
@@ -21,11 +28,10 @@ uint32_t splice_bits(
     unsigned low,
     unsigned high
 ) {
-    (void)destination;
-    (void)source;
-    (void)low;
-    (void)high;
-    return 0;
+    uint32_t mask = bit_range_mask(low, high);
+    destination = destination & ~mask;
+    uint32_t low_source_bits = (source << low) & mask;
+    return destination | low_source_bits;
 }
 
 int32_t decode_twos_complement(uint32_t bits, unsigned width) {
